@@ -1,7 +1,3 @@
-# ner_error_analysis.py
-# Enhanced NER error analysis with quantitative visualizations
-# Features: confusion matrix, F1 score comparison, precision-recall curves, error distribution analysis
-
 import os
 import re
 import json
@@ -606,4 +602,5 @@ if __name__ == "__main__":
         output_dir=OUTPUT_DIR,
         max_length=256,
         top_k=50
+
     )
