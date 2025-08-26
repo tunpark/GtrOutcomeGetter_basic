@@ -23,27 +23,33 @@ The entire project follows a logical sequence, organized into folders. Follow th
 
 ### Stage 1: Data Acquisition and Preparation (`getData/`)
 
-This stage focuses on gathering raw data from the UKRI GtR API, processing it, and creating labeled datasets for model training.
+This stage focuses on gathering raw data from the API and processing it through a series of rule-based and manual steps to create the final training datasets.
 
-* **1.1. `sample_projects.py` & `fetch_outcomes.py`**:
-    * These scripts work together to fetch project data. `sample_projects.py` first samples projects based on funder quotas, and then `fetch_outcomes.py` retrieves the detailed outcome descriptions for those projects.
-    * **Output**: A SQLite database (`projects_sample.db` or `project_outcomes.db`) containing raw project and outcome text.
+* **1.1. Data Acquisition (`sample_projects.py` & `fetch_outcomes.py`)**:
+    * These scripts fetch project data from the UKRI GtR API based on funder quotas.
+    * **Output**: A SQLite database (`projects_sample.db`) containing raw project and outcome text.
 
-* **1.2. Data Cleaning (`getCleanDoccano.py`)**:
-    * This script intelligently cleans the raw JSONL data from an annotation tool (e.g., `all.jsonl`). It analyzes the data balance and, if necessary, removes samples with no entities.
-    * **Input**: `all.jsonl`
-    * **Output**: `cleaned_all.jsonl` (This cleaned file should be used as input for subsequent steps).
-
-* **1.3. Creating Labeled Datasets (`getGodlendata.py` & `getWeakData.py`)**:
-    * `getGodlendata.py`: Applies hard-coded rules to create a high-quality, "golden" dataset for classification.
+* **1.2. Rule-Based Dataset Generation (`getGodlendata.py` & `getWeakData.py`)**:
+    * These scripts create initial labeled datasets for the **classification task** from the database.
+    * `getGodlendata.py`: Applies hard-coded rules to create a high-quality, "golden" dataset. This dataset also serves as a foundation for guiding the manual NER annotation process.
         * **Output**: `software_and_creative_outcomes.csv`.
-    * `getWeakData.py`: Uses keyword matching on URLs to generate a larger but potentially noisy "weakly" labeled dataset for classification.
+    * `getWeakData.py`: Uses keyword matching to generate a larger, "weakly" labeled dataset.
         * **Output**: `weakly_labeled_outcomes.csv`.
 
-* **1.4. Final Formatting & Combination**:
-    * `toBIO.py`: Converts the cleaned JSONL data (`cleaned_all.jsonl`) into the BIO format required for certain NER models.
+* **1.3. Cleaning (NER Workflow)**:
+    * The golden datasets generated above, are used to put in a tool like **Doccano**. The goal is to create a detailed dataset for the NER task.
+    * `getCleanDoccano.py`: This script cleans the raw `all.jsonl` file from Doccano. It analyzes the data balance and intelligently removes samples with no entities if necessary.
+        * **Input**: `all.jsonl`
+        * **Output**: `cleaned_all.jsonl`.
+
+* **1.4. Final Data Formatting & Combination**:
+    * `toBIO.py`: Converts the cleaned NER data (`cleaned_all.jsonl`) into the BIO format, which is required for some NER models.
+        * **Input**: `cleaned_all.jsonl`
         * **Output**: `bio_format.txt`.
-    * The golden and weak classification datasets are combined into a single file for training. A helper function for this is in `model_training/classifier_modelchoice.py`.
+    * `getTestData.py`: Formats the golden classification dataset for specific tools.
+        * **Input**: `software_and_creative_outcomes.csv`
+        * **Output**: `labelsleuth.csv`.
+    * **(Combination for Classification)** The golden and weak classification datasets are combined into a single file for training. A helper function for this is located in `model_training/classifier_modelchoice.py`.
         * **Output**: `combined_analysis_data.csv`.
 
 ### Stage 2: Model Training & Experimentation (`model_training/`)
@@ -98,11 +104,10 @@ This final stage demonstrates how to load and use the saved models for predictio
 **After downloading this repository, you will need to manually adjust the file paths inside the scripts.** Many scripts contain hardcoded paths to data files, models, or output directories (e.g., in `if __name__ == "__main__":` blocks). Please review the scripts you intend to run and update these paths to match your local file structure.
 
 1.  **Setup**:
-    * Install all required Python packages. 
-
+    * Install all required Python packages.
+    * 
 2.  **Data Preparation**:
-    * Run the scripts in the `getData/` folder in the logical order described above to fetch and process the data.
-    * Ensure the final `combined_analysis_data.csv` (for classification) and `bio_format.txt` / `cleaned_all.jsonl` (for NER) are generated.
+    * Run the scripts in the `getData/` folder in the logical order described in Stage 1 to fetch and process the data.
 
 3.  **Model Training**:
     * For classification, run the scripts in `model_training/` in order:
@@ -112,6 +117,10 @@ This final stage demonstrates how to load and use the saved models for predictio
     * For NER, choose one of the training scripts (e.g., `train_transformer.py`) and run it.
 
 4.  **Model Evaluation**:
-    * After a final model has been saved (e.g., in `final_model/` or `transformer_ner_model/`), run the corresponding script in the `model_evaluating/` folder to get a detailed performance breakdown.
-        * Run `error_analysis_classifier.py` for the classification model.
-        * Run `error_analysis_nre.py` for the NER model.
+    * After a final model has been saved, run the corresponding script in the `model_evaluating/` folder to get a detailed performance breakdown.
+
+
+
+
+
+
