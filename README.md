@@ -105,7 +105,6 @@ This final stage demonstrates how to load and use the saved models for predictio
 
 1.  **Setup**:
     * Install all required Python packages.
-    * 
 2.  **Data Preparation**:
     * Run the scripts in the `getData/` folder in the logical order described in Stage 1 to fetch and process the data.
 
