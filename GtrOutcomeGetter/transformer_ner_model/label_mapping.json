@@ -1,0 +1,20 @@
+{
+  "label2id": {
+    "O": 0,
+    "B-Software": 1,
+    "I-Software": 2,
+    "B-Software_Url": 3,
+    "I-Software_Url": 4
+  },
+  "id2label": {
+    "0": "O",
+    "1": "B-Software",
+    "2": "I-Software",
+    "3": "B-Software_Url",
+    "4": "I-Software_Url"
+  },
+  "entity_labels": [
+    "Software",
+    "Software_Url"
+  ]
+}
