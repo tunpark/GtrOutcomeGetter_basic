@@ -1,7 +1,7 @@
-# -GtrOutcomeGetter
+# GtrOutcomeGetter
 This repository contains the training and testing code for the GtrOutcomeGetter API, a backend service hosted on Hugging Face Spaces that powers the "GtR Project Analyzer" browser extension.
-1.  **Text Classification**: To determine whether a project outcome's description pertains to "software".
-2.  **Named Entity Recognition (NER)**: To extract specific entities like software names and support URLs from the text.
+1.	**Text Classification**: To determine whether a project outcome's description pertains to "software".
+2.	**Named Entity Recognition (NER)**: To extract specific entities like software names and support URLs from the text.
 
 The repository is structured into a clear, step-by-step pipeline.
 
@@ -96,6 +96,12 @@ This stage is for conducting a deep dive into the performance of the final, save
 This final stage demonstrates how to load and use the saved models for prediction on new data.
 
 * **Prediction Functions**: The `save_classifier.py` script contains helper functions (`load_model_and_predict`) that serve as a template for loading the final model and making predictions on new text.
+
+### Stage 5: Local API Deployment and Testing (`GtRoutcomeGetter/`)
+
+This folder contains a local deployment of the Hugging Face API. It includes the final saved models and the application logic required to run the service locally.
+
+The primary purpose of this local deployment is for end-to-end testing. It allows you to run the complete prediction logic on the SQLite database (`projects_sample.db`) generated in **Stage 1**, providing a way to validate the final pipeline's behavior on the full dataset before deploying it publicly.
 
 ## How to Run the Pipeline
 
